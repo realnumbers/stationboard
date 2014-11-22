@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="21.828758"
+   height="20.783539"
+   viewBox="0 0 5.7755256 5.498978"
+   id="svg5395"
+   version="1.1"
+   inkscape:version="0.91+devel r13708 custom"
+   sodipodi:docname="starred.svg">
+  <defs
+     id="defs5397" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="25.714562"
+     inkscape:cy="9.2911452"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1366"
+     inkscape:window-height="741"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5400">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Ebene 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-93.399851,-16.827054)">
+    <path
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       style="fill:#fabc00;fill-rule:evenodd;stroke:#fabc00;stroke-width:0.39687505;stroke-linecap:butt;stroke-linejoin:bevel;stroke-opacity:1"
+       d="m 93.51696,18.903082 2.10846,0 0.65035,-2.01508 0.65008,2.01508 2.13281,0 -1.7272,1.25603 0.6477,2.00644 -1.69889,-1.24199 -1.70762,1.24199 0.65034,-2.01517 z"
+       id="path5795"
+       inkscape:connector-curvature="0" />
+  </g>
+</svg>
