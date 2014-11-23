@@ -28,6 +28,28 @@ body {
 h1, h2, h3, h4 {
   margin: 0;
 }
+button, button:hover, button:focus, button:active {
+  background-color: transparent;
+  color: transparent;
+  border: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+input, input:hover, input:focus, input:active {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+.search-button, .station-star {
+  width: 1.8em;
+  height: 1.8em;
+  background-size: 1em;
+  background-repeat: no-repeat;
+  background-position: center;
+}
 
 /* LAYOUT */
 .container, .search-container {
@@ -45,14 +67,15 @@ h1, h2, h3, h4 {
   }
 }
 .scroll {
-  margin: 4em 1em;
+  padding-top: 4.4em;
+  margin: 0 1em;
 }
 .search-results {
 }
 .favorites {
 }
 .favorites-title {
-  margin-top: 2em;
+  padding-top: 2em;
   text-align: center;
   text-transform: uppercase;
 }
@@ -73,20 +96,12 @@ h1, h2, h3, h4 {
 .search-input {
   flex: 1;
   font-size: 1.2em;
-
-  /* reset browser input styles */
-  background-color: #fff;
-  border: none;
-  box-shadow: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
 .search-button {
   align-self: flex-end;
   vertical-align: middle;
 
-  width: 1em;
-  padding-bottom: 3px;
+  background-image: url(img/search.svg);
 }
 
 /* STATION ITEMS */
@@ -104,6 +119,7 @@ h1, h2, h3, h4 {
   padding: 1em 0.5em;
 
   display: flex;
+  align-items: center;
 }
 .station-title {
   flex: 1;
@@ -114,7 +130,14 @@ h1, h2, h3, h4 {
   font-weight: 600;
 }
 .station-star {
-  width: 1.2em;
+  width: 2em;
+  background-size: 1.127em;
+}
+.star {
+  background-image: url(img/star.svg);
+}
+.nostar {
+  background-image: url(img/nostar.svg);
 }
 
 .bus-list {

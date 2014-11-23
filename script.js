@@ -1,5 +1,5 @@
 var iconStar = "img/star.svg";
-var iconNostar = "img/notstar.svg";
+var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
 
 $(document).ready(function() {
@@ -27,11 +27,14 @@ $(document).ready(function() {
       $(this).attr("src", iconNostar);
       $(this).removeClass("js-starred");
       $(this).parents(".station").remove();
+      return false;
     } else {
       // Add new Favorite
       $(this).attr("src", iconStar);
+      $(this).removeClass("nostar").addClass("star");
       $(this).addClass("js-starred");
-      $(".favorites").append($(this).parents(".station"));
+      $(".favorites").append($(this).parents(".station").clone());
+      return false;
     }
   });
 
