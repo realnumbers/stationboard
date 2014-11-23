@@ -41,19 +41,17 @@ $(document).ready(function() {
 });
 
 $(".js-search").bind("input", function() {
-	console.log("New input", $(".js-search").val());
+	var suggests = matchInput(getBusstopList(), $(".js-search").val());
+	console.log(suggests);
+	printSuggests(suggests);
 });
 
-//test match function
-function testMatch(input) {
-	return matchInput(getBusstopList(), input);
-}
 //match input with busstops name and citys
 function matchInput(list, input) {
 	var pattern = new RegExp(input, "i");
 	//input = input.split(" ");
 	var suggests = new Array();
-	for (var i = 0; i < list.length && suggests.length < 5; i++) {
+	for (var i = 0; i < list.length && suggests.length < 3; i++) {
 		var found = list[i].ORT_GEMEINDE.match(pattern);
 		if (found == null)
 			found = list[i].ORT_NAME.match(pattern);
@@ -61,6 +59,17 @@ function matchInput(list, input) {
 			suggests[suggests.length] = list[i];
 	}
 	return suggests;
+}
+//output suggests
+function printSuggests(suggests) {
+	if (suggests.length > 0)
+		printNext($(".search-results").find(".station:first"), suggests, 0);
+}
+
+function printNext(el, suggests, i) {
+	el.find(".station-title").text(suggests[i].ORT_NAME);
+	if (el.next(".station").length != 0 && suggests[i+1] != undefined)
+		printNext(el.next(".station"), suggests, i+1);
 }
 
 // cache busstops
