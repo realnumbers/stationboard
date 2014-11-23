@@ -48,15 +48,22 @@ $(".js-search").bind("input", function() {
 
 //match input with busstops name and citys
 function matchInput(list, input) {
-	var pattern = new RegExp(input, "i");
-	//input = input.split(" ");
+	input = input.split(" ");
 	var suggests = new Array();
+	var found;
+	var j;
 	for (var i = 0; i < list.length && suggests.length < 3; i++) {
-		var found = list[i].ORT_GEMEINDE.match(pattern);
-		if (found == null)
-			found = list[i].ORT_NAME.match(pattern);
-		if (found != null)
-			suggests[suggests.length] = list[i];
+		j = 0;
+		do {
+			if (input[j] != "") {
+			found = list[i].ORT_GEMEINDE.match(new RegExp(input[j], "i"));
+			if (found == null)
+				found = list[i].ORT_NAME.match(new RegExp(input[j], "i"));
+			}
+			j++;
+		}while (j < input.length && found != null);
+			if (found != null)
+				suggests[suggests.length] = list[i];
 	}
 	return suggests;
 }
