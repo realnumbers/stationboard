@@ -4,8 +4,12 @@ var iconSearch = "img/search.svg";
 
 $(document).ready(function() {
 
+  // Initialize
+
   $(".bus-list").hide();
   $(".station").removeClass("expanded");
+
+  // User Events
 
   $(".station").click(function() {
     if ($(this).hasClass("expanded")) {
@@ -22,7 +26,7 @@ $(document).ready(function() {
       // Remove Favorite
       $(this).attr("src", iconNostar);
       $(this).removeClass("js-starred");
-      $(this).parents(".station").delay(300).remove();
+      $(this).parents(".station").remove();
     } else {
       // Add new Favorite
       $(this).attr("src", iconStar);
