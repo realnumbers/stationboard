@@ -7,44 +7,67 @@ loadBusstopsList();
 
 $(document).ready(function() {
 
-  // Initialize
+	// Initialize
 
-  $(".bus-list").hide();
-  $(".station").removeClass("expanded");
+	$(".bus-list").hide();
+	$(".station").removeClass("expanded");
 
-  // User Events
+	// User Events
 
-  $(".station").click(function() {
-    if ($(this).hasClass("expanded")) {
-      $(this).children(".bus-list").slideUp(200);
-      $(this).removeClass("expanded");
-    } else {
-      $(this).children(".bus-list").slideDown(200);
-      $(this).addClass("expanded");
-    }
-  });
+	$(".station").click(function() {
+		if ($(this).hasClass("expanded")) {
+			$(this).children(".bus-list").slideUp(200);
+			$(this).removeClass("expanded");
+		} else {
+			$(this).children(".bus-list").slideDown(200);
+			$(this).addClass("expanded");
+		}
+	});
 
-  $(".station-star").click(function() {
-    if ($(this).hasClass("js-starred")) {
-      // Remove Favorite
-      $(this).attr("src", iconNostar);
-      $(this).removeClass("js-starred");
-      $(this).parents(".station").remove();
-    } else {
-      // Add new Favorite
-      $(this).attr("src", iconStar);
-      $(this).addClass("js-starred");
-      $(".favorites").append($(this).parents(".station"));
-    }
-  });
+	$(".station-star").click(function() {
+		if ($(this).hasClass("js-starred")) {
+			// Remove Favorite
+			$(this).attr("src", iconNostar);
+			$(this).removeClass("js-starred");
+			$(this).parents(".station").remove();
+		} else {
+			// Add new Favorite
+			$(this).attr("src", iconStar);
+			$(this).addClass("js-starred");
+			$(".favorites").append($(this).parents(".station"));
+		}
+	});
 
 });
+
+$(".js-search").bind("input", function() {
+	console.log("New input", $(".js-search").val());
+});
+
+//test match function
+function testMatch(input) {
+	return matchInput(getBusstopList(), input);
+}
+//match input with busstops name and citys
+function matchInput(list, input) {
+	var pattern = new RegExp(input, "i");
+	//input = input.split(" ");
+	var suggests = new Array();
+	for (var i = 0; i < list.length && suggests.length < 5; i++) {
+		var found = list[i].ORT_GEMEINDE.match(pattern);
+		if (found == null)
+			found = list[i].ORT_NAME.match(pattern);
+		if (found != null)
+			suggests[suggests.length] = list[i];
+	}
+	return suggests;
+}
 
 // cache busstops
 function loadBusstopsList() {
 	console.log("Start Request");
-  var apiUrl = "http://opensasa.info/SASAplandata/?type=BASIS_VER_GUELTIGKEIT";
-		request(apiUrl, validitySuccess, "jsonp");
+	var apiUrl = "http://opensasa.info/SASAplandata/?type=BASIS_VER_GUELTIGKEIT";
+	request(apiUrl, validitySuccess, "jsonp");
 }
 
 function validitySuccess(data) {
@@ -72,17 +95,17 @@ function getBusstopList() {
 // callback is the name of the callback arg
 function request(urlAPI, success, callback) {
 	$.ajax({
-url: urlAPI,
-dataType: 'jsonp',
-jsonp: callback,
-success: function( data ) {
-console.log("success: " + urlAPI);
-success(data);
-},
-error: function( data ) {
-console.log("Error: " + urlAPI);
-}
-});
+		url: urlAPI,
+		dataType: 'jsonp',
+		jsonp: callback,
+		success: function( data ) {
+			console.log("success: " + urlAPI);
+			success(data);
+		},
+		error: function( data ) {
+			console.log("Error: " + urlAPI);
+		}
+	});
 }
 
 
