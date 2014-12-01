@@ -105,6 +105,11 @@ function validitySuccess(data) {
 }
 
 function busstopsSuccess(data) {
+  for (var i = 0; i < data.length; i++) {
+  // [0] is italian [1] is german
+    data[i].stop = data[i].ORT_NAME.split(" - ");
+    data[i].city = data[i].ORT_GEMEINDE.split(" - ");
+  }
   localStorage.setItem('busstops', JSON.stringify(data));
 }
 
