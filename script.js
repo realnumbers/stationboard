@@ -1,6 +1,8 @@
 var iconStar = "img/star.svg";
 var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
+var fav = new Object();
+var lang = 0; // 0 for italian and 1 for german
 
 
 loadBusstopsList();
@@ -9,12 +11,17 @@ $(document).ready(function() {
 
   // Initialize
 
+  $(":input").val("");
   $(".bus-list").hide();
   $(".station").removeClass("expanded");
+  //bindEvents();
+});
+
 
   // User Events
-
+ function bindToogle() {
   $(".station").click(function() {
+    console.log("Toogle");
     if ($(this).hasClass("expanded")) {
       $(this).children(".bus-list").slideUp(200);
       $(this).removeClass("expanded");
@@ -24,28 +31,33 @@ $(document).ready(function() {
     }
   });
 
-  $(".station-star").click(function() {
+ }
+
+function bindStar(el) {
+  $(el).click(function() {
     if ($(this).hasClass("js-starred")) {
       // Remove Favorite
       $(this).attr("src", iconNostar);
+      $(this).removeClass("star").addClass("nostar");
       $(this).removeClass("js-starred");
-      $(this).parents(".station").remove();
+      //$(this).parents(".station").remove();
       return false;
     } else {
+      console.log("Test");
       // Add new Favorite
       $(this).attr("src", iconStar);
       $(this).removeClass("nostar").addClass("star");
       $(this).addClass("js-starred");
-      $(".favorites").append($(this).parents(".station").clone());
+//    $(".favorites").append($(this).parents(".station").clone());
       return false;
     }
   });
 
-});
+}
 
 $(".js-search").bind("input", function() {
+  $(".search-results").empty();
   var suggests = matchInput(getBusstopList(), $(".js-search").val());
-  console.log(suggests);
   printSuggests(suggests);
 });
 
@@ -73,14 +85,44 @@ function matchInput(list, input) {
 
 //output suggests
 function printSuggests(suggests) {
-  if (suggests.length > 0)
-    printNext($(".search-results").find(".station:first"), suggests, 0);
+  for (var i = 0; i < suggests.length; i++) {
+    var div = '<article class="station">' + 
+      '<header class="station-header">' + 
+      '<h1 class="station-title">' + 
+      suggests[i].stop[lang] + " - " +
+      suggests[i].city[lang] + 
+      '</h1>' + 
+      '<button class="station-star nostar"></button>' + 
+      '</header>' + 
+      '<section class="bus-list" style="display: none;"></section>' + 
+      '</article>';
+    $(".search-results").append(div);
+    var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + suggests[i].busstops[0].ORT_NR;
+    request(apiUrl, stationSuccess, "JSONP", i);
+    bindStar($(".station-star:last"));
+  }
+  bindToogle();
+  console.log(suggests);
 }
 
-function printNext(el, suggests, i) {
-  el.find(".station-title").text(suggests[i].ORT_NAME);
-  if (el.next(".station").length != 0 && suggests[i + 1] != undefined)
-    printNext(el.next(".station"), suggests, i + 1);
+function stationSuccess(data, index) {
+  data = data.rides;
+  console.log("Result", data, index);
+  for(var i = 0; i < data.length; i++) {
+    var div = '<article class="bus">' +
+      '<label class="line">' +
+      data[i].lidname +
+      '</label>' +
+      '<label class="time">' +
+      formatTime(data[i].departure)+
+      '</label>' +
+      '<label class="endstation">'+
+      data[i].last_station.split(" - ")[lang] +
+      '</label>' +
+      '</article>';
+    console.log("Data");
+    $(".bus-list:eq(" + index + ")").append(div);
+  }
 }
 
 // cache busstops
@@ -89,6 +131,10 @@ function loadBusstopsList() {
   var apiUrl =
     "http://opensasa.info/SASAplandata/?type=BASIS_VER_GUELTIGKEIT";
   request(apiUrl, validitySuccess, "jsonp");
+}
+
+function formatTime(time) {
+  return time;
 }
 
 function validitySuccess(data) {
@@ -106,7 +152,7 @@ function validitySuccess(data) {
 
 function busstopsSuccess(data) {
   for (var i = 0; i < data.length; i++) {
-  // [0] is italian [1] is german
+    // [0] is italian [1] is german
     data[i].stop = data[i].ORT_NAME.split(" - ");
     data[i].city = data[i].ORT_GEMEINDE.split(" - ");
   }
@@ -119,14 +165,14 @@ function getBusstopList() {
 }
 
 // callback is the name of the callback arg
-function request(urlAPI, success, callback) {
+function request(urlAPI, success, callback, index) {
   $.ajax({
     url: urlAPI,
     dataType: 'jsonp',
     jsonp: callback,
     success: function(data) {
       console.log("success: " + urlAPI);
-      success(data);
+      success(data, index);
     },
     error: function(data) {
       console.log("Error: " + urlAPI);
