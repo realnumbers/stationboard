@@ -18,8 +18,8 @@ $(document).ready(function() {
 });
 
 
-  // User Events
- function bindToogle() {
+// User Events
+function bindToogle() {
   $(".station").click(function() {
     console.log("Toogle");
     if ($(this).hasClass("expanded")) {
@@ -31,7 +31,7 @@ $(document).ready(function() {
     }
   });
 
- }
+}
 
 function bindStar(el) {
   $(el).click(function() {
@@ -48,7 +48,7 @@ function bindStar(el) {
       $(this).attr("src", iconStar);
       $(this).removeClass("nostar").addClass("star");
       $(this).addClass("js-starred");
-//    $(".favorites").append($(this).parents(".station").clone());
+      //    $(".favorites").append($(this).parents(".station").clone());
       return false;
     }
   });
@@ -64,7 +64,7 @@ $(".js-search").bind("input", function() {
 //match input with busstops name and citys
 function matchInput(list, input) {
   input = input.split(" ");
-  var suggests = new Array();
+  var suggests = [];
   var found;
   var j;
   for (var i = 0; i < list.length && suggests.length < 3; i++) {
@@ -86,18 +86,19 @@ function matchInput(list, input) {
 //output suggests
 function printSuggests(suggests) {
   for (var i = 0; i < suggests.length; i++) {
-    var div = '<article class="station">' + 
-      '<header class="station-header">' + 
-      '<h1 class="station-title">' + 
+    var div = '<article class="station">' +
+      '<header class="station-header">' +
+      '<h1 class="station-title">' +
       suggests[i].stop[lang] + " - " +
-      suggests[i].city[lang] + 
-      '</h1>' + 
-      '<button class="station-star nostar"></button>' + 
-      '</header>' + 
-      '<section class="bus-list" style="display: none;"></section>' + 
+      suggests[i].city[lang] +
+      '</h1>' +
+      '<button class="station-star nostar"></button>' +
+      '</header>' +
+      '<section class="bus-list" style="display: none;"></section>' +
       '</article>';
     $(".search-results").append(div);
-    var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + suggests[i].busstops[0].ORT_NR;
+    var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" +
+      suggests[i].busstops[0].ORT_NR;
     request(apiUrl, stationSuccess, "JSONP", i);
     bindStar($(".station-star:last"));
   }
@@ -108,15 +109,15 @@ function printSuggests(suggests) {
 function stationSuccess(data, index) {
   data = data.rides;
   console.log("Result", data, index);
-  for(var i = 0; i < data.length; i++) {
+  for (var i = 0; i < data.length; i++) {
     var div = '<article class="bus">' +
-      '<label class="line">' +
+      '<label class="line" style="background-color:' + data[i].hexcode + '">' +
       data[i].lidname +
       '</label>' +
       '<label class="time">' +
-      formatTime(data[i].departure)+
+      formatTime(data[i].departure) +
       '</label>' +
-      '<label class="endstation">'+
+      '<label class="endstation">' +
       data[i].last_station.split(" - ")[lang] +
       '</label>' +
       '</article>';
