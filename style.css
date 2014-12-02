@@ -112,8 +112,11 @@ input, input:hover, input:focus, input:active {
 .station:last-of-type {
   border-bottom: none;
 }
+.station:hover {
+  background-color: #e7e7e7;
+}
 .station:active {
-  background-color: #e2e2e2;
+  background-color: #e0e0e0;
 }
 .station-header {
   padding: 1em 0.5em;
@@ -126,7 +129,7 @@ input, input:hover, input:focus, input:active {
 
   font-weight: 400;
 }
-.expanded .station-title, .station:active .station-title {
+.expanded .station-title {
   font-weight: 600;
 }
 .station-star {
