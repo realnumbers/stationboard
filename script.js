@@ -1,7 +1,7 @@
 var iconStar = "img/star.svg";
 var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
-var fav = new Object();
+var favo = new Object();
 var lang = 0; // 0 for italian and 1 for german
 
 
@@ -21,7 +21,7 @@ $(document).ready(function() {
 // User Events
 function bindToogle() {
   $(".station").click(function() {
-    console.log("Toogle");
+    //console.log("Toogle");
     if ($(this).hasClass("expanded")) {
       $(this).children(".bus-list").slideUp(200);
       $(this).removeClass("expanded");
@@ -33,27 +33,65 @@ function bindToogle() {
 
 }
 
-function bindStar(el) {
+function bindStar(el, con) {
+     //console.log("Bind Star", el);
   $(el).click(function() {
     if ($(this).hasClass("js-starred")) {
       // Remove Favorite
       $(this).attr("src", iconNostar);
       $(this).removeClass("star").addClass("nostar");
       $(this).removeClass("js-starred");
+      removeFavorit(con);
       //$(this).parents(".station").remove();
       return false;
     } else {
-      console.log("Test");
       // Add new Favorite
       $(this).attr("src", iconStar);
       $(this).removeClass("nostar").addClass("star");
       $(this).addClass("js-starred");
+      addFavorit(con);
       //    $(".favorites").append($(this).parents(".station").clone());
       return false;
     }
   });
 
 }
+
+function addFavorit(content) {
+  favo[content.busstops[0].ORT_NR] = content;
+  console.log("Favo: ", favo);
+  //printFavorit();
+}
+
+function removeFavorit(content) {
+  delete(favo[content.busstops[0].ORT_NR]);
+  console.log("Favo: ", favo);
+  //printFavorit();
+}
+
+function printFavorit() {
+  var i = $(".station").length;
+  for (el in favo) {
+    var div = '<article class="station">' +
+      '<header class="station-header">' +
+      '<h1 class="station-title">' +
+      el.stop[lang] + " - " +
+      el.city[lang] +
+      '</h1>' +
+      '<button class="station-star nostar"></button>' +
+      '</header>' +
+      '<section class="bus-list" style="display: none;"></section>' +
+      '</article>';
+    $(".favorites").append(div);
+    var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" +
+      el.busstops[0].ORT_NR;
+    request(apiUrl, stationSuccess, "JSONP", i);
+    bindStar($(".favorites").find(".station-star:last"), el);
+    i++;
+  }
+  bindToogle();
+}
+
 
 $(".js-search").bind("input", function() {
   $(".search-results").empty();
@@ -100,15 +138,15 @@ function printSuggests(suggests) {
     var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" +
       suggests[i].busstops[0].ORT_NR;
     request(apiUrl, stationSuccess, "JSONP", i);
-    bindStar($(".station-star:last"));
+    bindStar($(".search-results").find(".station-star:last"), suggests[i]);
   }
   bindToogle();
-  console.log(suggests);
+  //console.log(suggests);
 }
 
 function stationSuccess(data, index) {
   data = data.rides;
-  console.log("Result", data, index);
+  //console.log("Result", data, index);
   for (var i = 0; i < data.length; i++) {
     var div = '<article class="bus">' +
       '<label class="line" style="background-color:' + data[i].hexcode + '">' +
@@ -121,7 +159,7 @@ function stationSuccess(data, index) {
       data[i].last_station.split(" - ")[lang] +
       '</label>' +
       '</article>';
-    console.log("Data");
+    //console.log("Data");
     $(".bus-list:eq(" + index + ")").append(div);
   }
 
@@ -133,7 +171,7 @@ function stationSuccess(data, index) {
 
 // cache busstops
 function loadBusstopsList() {
-  console.log("Start Request");
+  //console.log("Start Request");
   var apiUrl =
     "http://opensasa.info/SASAplandata/?type=BASIS_VER_GUELTIGKEIT";
   request(apiUrl, validitySuccess, "jsonp");
@@ -148,7 +186,7 @@ function validitySuccess(data) {
     localStorage.clear();
     localStorage.version = data[0].VER_GUELTIGKEIT;
     if (!localStorage.busstops) {
-      console.log("New Data");
+      //console.log("New Data");
       var apiUrl = "http://opensasa.info/SASAplandata/?type=REC_ORT";
       request(apiUrl, busstopsSuccess, "jsonp");
     }
@@ -177,7 +215,7 @@ function request(urlAPI, success, callback, index) {
     dataType: 'jsonp',
     jsonp: callback,
     success: function(data) {
-      console.log("success: " + urlAPI);
+      //console.log("success: " + urlAPI);
       success(data, index);
     },
     error: function(data) {
