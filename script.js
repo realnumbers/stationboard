@@ -78,6 +78,11 @@ function removeFavorit(content) {
 }
 
 function printFavorit(favo) {
+	console.log(favo);
+	if (JSON.stringify(favo) == "{}")
+		$(".favorites-title").hide();
+	else
+		$(".favorites-title").show();
 	$(".favorites").empty();
 	var i = $(".station").length;
 	console.log(favo);
