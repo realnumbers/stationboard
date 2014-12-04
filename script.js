@@ -72,9 +72,9 @@ function removeFavorit(content) {
 	delete(favo[content.busstops[0].ORT_NR]);
 	console.log("Favo: ", favo);
 	var suggests = matchInput(getBusstopList(), $(".js-search").val());
+	saveFavo(favo);
 	printSuggests(suggests);
 	printFavorit(favo);
-	saveFavo(favo);
 }
 
 function printFavorit(favo) {
