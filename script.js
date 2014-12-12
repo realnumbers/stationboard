@@ -2,6 +2,7 @@ var iconStar = "img/star.svg";
 var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
 var lang = 0; // 0 for italian and 1 for german
+var board = new Object();
 
 
 loadBusstopsList();
@@ -13,16 +14,15 @@ $(document).ready(function() {
 	$(":input").val("");
 	$(".bus-list").hide();
 	$(".station").removeClass("expanded");
-	var favo = loadFavo();
-	printFavorit(favo);
-	saveFavo(favo);
+  drawContent();
+
 });
 
 
 //bindEvents();
 // User Events
-function bindToogle() {
-	$(".station").click(function() {
+function bindToogle(el) {
+	el.find(".station").click(function() {
 		//console.log("Toogle");
 		if ($(this).hasClass("expanded")) {
 			$(this).children(".bus-list").slideUp(200);
@@ -62,30 +62,26 @@ function bindStar(el, con) {
 function addFavorit(content) {
 	var favo = loadFavo();
 	favo[content.busstops[0].ORT_NR] = content;
-	console.log("Favo: ", favo);
-	printFavorit(favo);
 	saveFavo(favo);
+  drawContent();
 }
 
 function removeFavorit(content) {
 	var favo = loadFavo();
 	delete(favo[content.busstops[0].ORT_NR]);
-	console.log("Favo: ", favo);
-	var suggests = matchInput(getBusstopList(), $(".js-search").val());
 	saveFavo(favo);
-	printSuggests(suggests);
-	printFavorit(favo);
+  drawContent();
 }
 
 function printFavorit(favo) {
-	console.log(favo);
+	//console.log(favo);
 	if (JSON.stringify(favo) == "{}")
 		$(".favorites-title").hide();
 	else
 		$(".favorites-title").show();
 	$(".favorites").empty();
 	var i = $(".station").length;
-	console.log(favo);
+	//console.log(favo);
 	for (var el in favo) {
 		var div = '<article class="station">' +
 			'<header class="station-header">' +
@@ -97,20 +93,17 @@ function printFavorit(favo) {
 			'</header>' +
 			'<section class="bus-list" style="display: none;"></section>' +
 			'</article>';
-		$(".favorites").append(div);
-		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" +
-			favo[el].busstops[0].ORT_NR;
-		request(apiUrl, stationSuccess, "JSONP", i);
+		var element = $(".favorites").append(div);
+    insertBoard(element , favo[el].busstops[0].ORT_NR);
 		bindStar($(".favorites").find(".station-star:last"), favo[el]);
 		i++;
 	}
-	bindToogle();
 }
 
 
 $(".js-search").bind("input", function() {
-	var suggests = matchInput(getBusstopList(), $(".js-search").val());
-	printSuggests(suggests);
+	//var suggests = matchInput(getBusstopList(), $(".js-search").val());
+  drawContent();
 });
 
 //match input with busstops name and citys
@@ -151,22 +144,35 @@ function printSuggests(suggests) {
 			'</header>' +
 			'<section class="bus-list" style="display: none;"></section>' +
 			'</article>';
-		$(".search-results").append(div);
-		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" +
-			suggests[i].busstops[0].ORT_NR;
-		request(apiUrl, stationSuccess, "JSONP", i);
+		var el = $(".search-results").append(div);
+    insertBoard(el , suggests[i].busstops[0].ORT_NR);
 		//favo must be set before bindStar
 		if (loadFavo()[suggests[i].busstops[0].ORT_NR])
 			$(".search-results").find(".station-star:last").removeClass("nostar").addClass("star js-starred");
 		bindStar($(".search-results").find(".station-star:last"), suggests[i]);
 	}
-	bindToogle();
 	//console.log(suggests);
 }
+function insertBoard(el, id) {
+  if (board[id] === undefined) {
+		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
+		request(apiUrl, stationSuccess, "JSONP", id);
+    board[id] = new Object();
+    board[id].runing = true;
+  }
+  else if (board[id].rides != undefined)
+    writeBoard(el, id);
+}
 
-function stationSuccess(data, index) {
-	data = data.rides;
-	//console.log("Result", data, index);
+function stationSuccess(data, id) {
+  board[id].runing = false;
+  board[id].rides = data.rides;
+  drawContent();
+  console.log(id);
+}
+
+function writeBoard(el, id) {
+	data = board[id].rides;
 	for (var i = 0; i < data.length; i++) {
 		var div = '<article class="bus">' +
 			'<label class="line" style="background-color:' + data[i].hexcode + '">' +
@@ -180,11 +186,11 @@ function stationSuccess(data, index) {
 			'</label>' +
 			'</article>';
 		//console.log("Data");
-		$(".bus-list:eq(" + index + ")").append(div);
+		el.find(".bus-list").append(div);
 	}
 
 	if (data.length === 0) {
-		$(".bus-list:eq(" + index + ")").append(
+		el.find(".bus-list").append(
 				'<label class="no-connections">No Connections</label>');
 	}
 }
@@ -253,4 +259,13 @@ function request(urlAPI, success, callback, index) {
 			console.log("Error: " + urlAPI);
 		}
 	});
+}
+
+function drawContent() {
+	var favo = loadFavo();
+	var suggests = matchInput(getBusstopList(), $(".js-search").val());
+	printSuggests(suggests);
+	printFavorit(favo);
+	bindToogle($(".search-results"));
+	bindToogle($(".favorites"));
 }
