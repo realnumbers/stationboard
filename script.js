@@ -2,6 +2,7 @@ var iconStar = "img/star.svg";
 var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
 var lang = 0; // 0 for italian and 1 for german
+var board = new Object();
 
 
 loadBusstopsList();
@@ -13,9 +14,8 @@ $(document).ready(function() {
 	$(":input").val("");
 	$(".bus-list").hide();
 	$(".station").removeClass("expanded");
-	var favo = loadFavo();
-	printFavorit(favo);
-	saveFavo(favo);
+  drawContent();
+
 });
 
 
@@ -62,23 +62,15 @@ function bindStar(el, con) {
 function addFavorit(content) {
 	var favo = loadFavo();
 	favo[content.busstops[0].ORT_NR] = content;
-	console.log("Favo: ", favo);
-	printFavorit(favo);
 	saveFavo(favo);
-	bindToogle($(".search-results"));
-	bindToogle($(".favorites"));
+  drawContent();
 }
 
 function removeFavorit(content) {
 	var favo = loadFavo();
 	delete(favo[content.busstops[0].ORT_NR]);
-	console.log("Favo: ", favo);
-	var suggests = matchInput(getBusstopList(), $(".js-search").val());
 	saveFavo(favo);
-	printSuggests(suggests);
-	printFavorit(favo);
-	bindToogle($(".search-results"));
-	bindToogle($(".favorites"));
+  drawContent();
 }
 
 function printFavorit(favo) {
@@ -101,10 +93,8 @@ function printFavorit(favo) {
 			'</header>' +
 			'<section class="bus-list" style="display: none;"></section>' +
 			'</article>';
-		$(".favorites").append(div);
-		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" +
-			favo[el].busstops[0].ORT_NR;
-		request(apiUrl, stationSuccess, "JSONP", i);
+		var element = $(".favorites").append(div);
+    insertBoard(element , favo[el].busstops[0].ORT_NR);
 		bindStar($(".favorites").find(".station-star:last"), favo[el]);
 		i++;
 	}
@@ -112,9 +102,8 @@ function printFavorit(favo) {
 
 
 $(".js-search").bind("input", function() {
-	var suggests = matchInput(getBusstopList(), $(".js-search").val());
-	printSuggests(suggests);
-	bindToogle($(".search-results"));
+	//var suggests = matchInput(getBusstopList(), $(".js-search").val());
+  drawContent();
 });
 
 //match input with busstops name and citys
@@ -155,10 +144,8 @@ function printSuggests(suggests) {
 			'</header>' +
 			'<section class="bus-list" style="display: none;"></section>' +
 			'</article>';
-		$(".search-results").append(div);
-		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" +
-			suggests[i].busstops[0].ORT_NR;
-		request(apiUrl, stationSuccess, "JSONP", i);
+		var el = $(".search-results").append(div);
+    insertBoard(el , suggests[i].busstops[0].ORT_NR);
 		//favo must be set before bindStar
 		if (loadFavo()[suggests[i].busstops[0].ORT_NR])
 			$(".search-results").find(".station-star:last").removeClass("nostar").addClass("star js-starred");
@@ -166,10 +153,24 @@ function printSuggests(suggests) {
 	}
 	//console.log(suggests);
 }
+function insertBoard(el, id) {
+  if (board[id] === undefined) {
+		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
+		request(apiUrl, stationSuccess, "JSONP", id);
+  }
+  else
+    writeBoard(el, id);
+}
 
-function stationSuccess(data, index) {
-	data = data.rides;
-	//console.log("Result", data, index);
+function stationSuccess(data, id) {
+  console.log(data, id);
+  board[id] = data.rides;
+  drawContent();
+}
+
+function writeBoard(el, id) {
+	data = board[id];
+	console.log("Result", data, id);
 	for (var i = 0; i < data.length; i++) {
 		var div = '<article class="bus">' +
 			'<label class="line" style="background-color:' + data[i].hexcode + '">' +
@@ -183,11 +184,11 @@ function stationSuccess(data, index) {
 			'</label>' +
 			'</article>';
 		//console.log("Data");
-		$(".bus-list:eq(" + index + ")").append(div);
+		el.find(".bus-list").append(div);
 	}
 
 	if (data.length === 0) {
-		$(".bus-list:eq(" + index + ")").append(
+		el.find(".bus-list").append(
 				'<label class="no-connections">No Connections</label>');
 	}
 }
@@ -256,4 +257,13 @@ function request(urlAPI, success, callback, index) {
 			console.log("Error: " + urlAPI);
 		}
 	});
+}
+
+function drawContent() {
+	var favo = loadFavo();
+	var suggests = matchInput(getBusstopList(), $(".js-search").val());
+	printSuggests(suggests);
+	printFavorit(favo);
+	bindToogle($(".search-results"));
+	bindToogle($(".favorites"));
 }
