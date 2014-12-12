@@ -74,14 +74,14 @@ function removeFavorit(content) {
 }
 
 function printFavorit(favo) {
-	console.log(favo);
+	//console.log(favo);
 	if (JSON.stringify(favo) == "{}")
 		$(".favorites-title").hide();
 	else
 		$(".favorites-title").show();
 	$(".favorites").empty();
 	var i = $(".station").length;
-	console.log(favo);
+	//console.log(favo);
 	for (var el in favo) {
 		var div = '<article class="station">' +
 			'<header class="station-header">' +
@@ -157,20 +157,22 @@ function insertBoard(el, id) {
   if (board[id] === undefined) {
 		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
 		request(apiUrl, stationSuccess, "JSONP", id);
+    board[id] = new Object();
+    board[id].runing = true;
   }
-  else
+  else if (board[id].rides != undefined)
     writeBoard(el, id);
 }
 
 function stationSuccess(data, id) {
-  console.log(data, id);
-  board[id] = data.rides;
+  board[id].runing = false;
+  board[id].rides = data.rides;
   drawContent();
+  console.log(id);
 }
 
 function writeBoard(el, id) {
-	data = board[id];
-	console.log("Result", data, id);
+	data = board[id].rides;
 	for (var i = 0; i < data.length; i++) {
 		var div = '<article class="bus">' +
 			'<label class="line" style="background-color:' + data[i].hexcode + '">' +
