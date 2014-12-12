@@ -67,7 +67,7 @@ input, input:hover, input:focus, input:active {
   }
 }
 .scroll {
-  padding-top: 4.4em;
+  padding: 4.4em 0 2em;
   margin: 0 1em;
 }
 .search-results {
@@ -76,6 +76,7 @@ input, input:hover, input:focus, input:active {
 }
 .favorites-title {
   padding-top: 2em;
+  padding-bottom: 0.5em;
   text-align: center;
   text-transform: uppercase;
 }
