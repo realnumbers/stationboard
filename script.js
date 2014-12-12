@@ -21,8 +21,8 @@ $(document).ready(function() {
 
 //bindEvents();
 // User Events
-function bindToogle() {
-	$(".station").click(function() {
+function bindToogle(el) {
+	el.find(".station").click(function() {
 		//console.log("Toogle");
 		if ($(this).hasClass("expanded")) {
 			$(this).children(".bus-list").slideUp(200);
@@ -65,6 +65,8 @@ function addFavorit(content) {
 	console.log("Favo: ", favo);
 	printFavorit(favo);
 	saveFavo(favo);
+	bindToogle($(".search-results"));
+	bindToogle($(".favorites"));
 }
 
 function removeFavorit(content) {
@@ -75,6 +77,8 @@ function removeFavorit(content) {
 	saveFavo(favo);
 	printSuggests(suggests);
 	printFavorit(favo);
+	bindToogle($(".search-results"));
+	bindToogle($(".favorites"));
 }
 
 function printFavorit(favo) {
@@ -104,13 +108,13 @@ function printFavorit(favo) {
 		bindStar($(".favorites").find(".station-star:last"), favo[el]);
 		i++;
 	}
-	bindToogle();
 }
 
 
 $(".js-search").bind("input", function() {
 	var suggests = matchInput(getBusstopList(), $(".js-search").val());
 	printSuggests(suggests);
+	bindToogle($(".search-results"));
 });
 
 //match input with busstops name and citys
@@ -160,7 +164,6 @@ function printSuggests(suggests) {
 			$(".search-results").find(".station-star:last").removeClass("nostar").addClass("star js-starred");
 		bindStar($(".search-results").find(".station-star:last"), suggests[i]);
 	}
-	bindToogle();
 	//console.log(suggests);
 }
 
