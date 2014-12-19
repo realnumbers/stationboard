@@ -21,9 +21,9 @@ $(document).ready(function() {
 
 //bindEvents();
 // User Events
-function bindToogle(el) {
+function bindToggle(el) {
 	el.find(".station").click(function() {
-		//console.log("Toogle");
+		//console.log("Toggle");
 		if ($(this).hasClass("expanded")) {
 			$(this).children(".bus-list").slideUp(200);
 			$(this).removeClass("expanded");
@@ -43,7 +43,7 @@ function bindStar(el, con) {
 			$(this).attr("src", iconNostar);
 			$(this).removeClass("star").addClass("nostar");
 			$(this).removeClass("js-starred");
-			removeFavorit(con);
+			removeFavorite(con);
 			//$(this).parents(".station").remove();
 			return false;
 		} else {
@@ -51,7 +51,7 @@ function bindStar(el, con) {
 			$(this).attr("src", iconStar);
 			$(this).removeClass("nostar").addClass("star");
 			$(this).addClass("js-starred");
-			addFavorit(con);
+			addFavorite(con);
 			//    $(".favorites").append($(this).parents(".station").clone());
 			return false;
 		}
@@ -59,21 +59,21 @@ function bindStar(el, con) {
 
 }
 
-function addFavorit(content) {
+function addFavorite(content) {
 	var favo = loadFavo();
 	favo[content.busstops[0].ORT_NR] = content;
 	saveFavo(favo);
   drawContent();
 }
 
-function removeFavorit(content) {
+function removeFavorite(content) {
 	var favo = loadFavo();
 	delete(favo[content.busstops[0].ORT_NR]);
 	saveFavo(favo);
   drawContent();
 }
 
-function printFavorit(favo) {
+function printFavorite(favo) {
 	//console.log(favo);
 	if (JSON.stringify(favo) == "{}")
 		$(".favorites-title").hide();
@@ -176,7 +176,7 @@ function writeBoard(el, id) {
 	for (var i = 0; i < data.length; i++) {
 		var div = '<article class="bus">' +
 			'<label class="line" style="background-color:' + data[i].hexcode + '">' +
-			data[i].lidname +
+			(data[i].lidname).substring(0,3) +
 			'</label>' +
 			'<label class="time">' +
 			formatTime(data[i].departure) +
@@ -265,7 +265,7 @@ function drawContent() {
 	var favo = loadFavo();
 	var suggests = matchInput(getBusstopList(), $(".js-search").val());
 	printSuggests(suggests);
-	printFavorit(favo);
-	bindToogle($(".search-results"));
-	bindToogle($(".favorites"));
+	printFavorite(favo);
+	bindToggle($(".search-results"));
+	bindToggle($(".favorites"));
 }
