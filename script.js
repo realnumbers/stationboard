@@ -2,6 +2,7 @@ var iconStar = "img/star.svg";
 var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
 var lang = 0; // 0 for italian and 1 for german
+var sug = new Array();
 var board = new Object();
 
 
@@ -14,14 +15,14 @@ $(document).ready(function() {
 	$(":input").val("");
 	$(".bus-list").hide();
 	$(".station").removeClass("expanded");
-  drawContent();
+	drawContent();
 
 });
 
 
 //bindEvents();
 // User Events
-function bindToggle(el) {
+function bindToggle(el, stop) {
 	el.find(".station").click(function() {
 		//console.log("Toggle");
 		if ($(this).hasClass("expanded")) {
@@ -63,14 +64,14 @@ function addFavorite(content) {
 	var favo = loadFavo();
 	favo[content.busstops[0].ORT_NR] = content;
 	saveFavo(favo);
-  drawContent();
+	drawContent();
 }
 
 function removeFavorite(content) {
 	var favo = loadFavo();
 	delete(favo[content.busstops[0].ORT_NR]);
 	saveFavo(favo);
-  drawContent();
+	drawContent();
 }
 
 function printFavorite(favo) {
@@ -80,7 +81,6 @@ function printFavorite(favo) {
 	else
 		$(".favorites-title").show();
 	$(".favorites").empty();
-	var i = $(".station").length;
 	//console.log(favo);
 	for (var el in favo) {
 		var div = '<article class="station">' +
@@ -94,16 +94,18 @@ function printFavorite(favo) {
 			'<section class="bus-list" style="display: none;"></section>' +
 			'</article>';
 		var element = $(".favorites").append(div);
-    insertBoard(element , favo[el].busstops[0].ORT_NR);
 		bindStar($(".favorites").find(".station-star:last"), favo[el]);
-		i++;
 	}
 }
 
 
 $(".js-search").bind("input", function() {
-	//var suggests = matchInput(getBusstopList(), $(".js-search").val());
-  drawContent();
+	sug = matchInput(getBusstopList(), $(".js-search").val());
+	for (var j = 0; j < sug.length; j++) {
+		for (var i = 0; i < sug[j].busstops.length; i++) {
+			downloadBoard(sug[j].busstops[i].ORT_NR);
+		}
+	}
 });
 
 //match input with busstops name and citys
@@ -132,6 +134,7 @@ function matchInput(list, input) {
 
 //output suggests
 function printSuggests(suggests) {
+	var favo = loadFavo();
 	$(".search-results").empty();
 	for (var i = 0; i < suggests.length; i++) {
 		var div = '<article class="station">' +
@@ -145,37 +148,44 @@ function printSuggests(suggests) {
 			'<section class="bus-list" style="display: none;"></section>' +
 			'</article>';
 		var el = $(".search-results").append(div);
-    insertBoard(el , suggests[i].busstops[0].ORT_NR);
+		for (var j = 0; j < suggests[i].busstops.length; j++) {
+			var id = suggests[i].busstops[j].ORT_NR;
+		if (board[id].rides != undefined) {
+			writeBoard(el, id);
+		}
+		}
 		//favo must be set before bindStar
-		if (loadFavo()[suggests[i].busstops[0].ORT_NR])
+		if (favo[suggests[i].busstops[0].ORT_NR])
 			$(".search-results").find(".station-star:last").removeClass("nostar").addClass("star js-starred");
 		bindStar($(".search-results").find(".station-star:last"), suggests[i]);
 	}
-	//console.log(suggests);
 }
-function insertBoard(el, id) {
-  if (board[id] === undefined) {
+
+function downloadBoard(id) {
+	if (board[id] === undefined) {
 		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
 		request(apiUrl, stationSuccess, "JSONP", id);
-    board[id] = new Object();
-    board[id].runing = true;
-  }
-  else if (board[id].rides != undefined)
-    writeBoard(el, id);
+		board[id] = new Object();
+		board[id].runing = true;
+	}
+	//else if (board[id].rides != undefined)
+	//	writeBoard(el, id);
 }
 
 function stationSuccess(data, id) {
-  board[id].runing = false;
-  board[id].rides = data.rides;
-  drawContent();
-  console.log(id);
+	board[id].runing = false;
+	board[id].rides = data.rides;
+	drawContent();
 }
 
 function writeBoard(el, id) {
 	data = board[id].rides;
+	//console.log(data);
+	//var section = '<section class="bus-list" id=' + id + '></section>';
+	//el.find(".station").append(section).hide();
 	el.find(".bus-list").empty();
 	for (var i = 0; i < 3 && i < data.length; i++) {
-    console.log("Line", i);
+		//console.log("Line", i);
 		var div = '<article class="bus">' +
 			'<label class="line" style="background-color:' + data[i].hexcode + '">' +
 			(data[i].lidname).substring(0,3) +
@@ -265,8 +275,7 @@ function request(urlAPI, success, callback, index) {
 
 function drawContent() {
 	var favo = loadFavo();
-	var suggests = matchInput(getBusstopList(), $(".js-search").val());
-	printSuggests(suggests);
+	printSuggests(sug);
 	printFavorite(favo);
 	bindToggle($(".search-results"));
 	bindToggle($(".favorites"));
