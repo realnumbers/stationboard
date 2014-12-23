@@ -173,7 +173,9 @@ function stationSuccess(data, id) {
 
 function writeBoard(el, id) {
 	data = board[id].rides;
-	for (var i = 0; i < data.length; i++) {
+	el.find(".bus-list").empty();
+	for (var i = 0; i < 3 && i < data.length; i++) {
+    console.log("Line", i);
 		var div = '<article class="bus">' +
 			'<label class="line" style="background-color:' + data[i].hexcode + '">' +
 			(data[i].lidname).substring(0,3) +
