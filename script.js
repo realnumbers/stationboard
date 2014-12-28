@@ -232,7 +232,9 @@ function addBoard(idList) {
   for (var i = 0; i < idList.length; i++) {
     div += '<section ' +
       'class="' + idList[i] + 
-      ' bus-list" style="display: none;">' +
+      ' bus-list direction' + 
+      ((i%2 === 0)? '' : ' standout') +
+      '" style="display: none;">' +
       '</section>';
   }
   return div;
