@@ -82,7 +82,6 @@ function removeFavorite(content) {
 
 function printFavorite(favo) {
 	//console.log(favo);
-  var idList = new Array();
 	if (JSON.stringify(favo) == "{}")
 		$(".favorites-title").hide();
 	else
@@ -91,8 +90,10 @@ function printFavorite(favo) {
 	//console.log(favo);
 	for (var el in favo) {
     for (var j = 0; j < favo[el].busstops.length; j++) {
+      var idList = new Array();
       idList[j] = favo[el].busstops[j].ORT_NR;
     }
+    console.log("Favo", idList);
 		var div = '<article class="station">' +
 			'<header class="station-header">' +
 			'<h1 class="station-title">' +
@@ -192,14 +193,6 @@ function stationSuccess(data, id) {
 }
 
 function insertRides() {
-  /*var el = $(".search-results").append(div);
-  for (var j = 0; j < suggests[i].busstops.length; j++) {
-    var id = suggests[i].busstops[j].ORT_NR;
-    if (board[id].rides != undefined) {
-      writeBoard(el, id);
-    }
-  }
-  */
   for (var id in board) {
     var data = board[id].rides;
     $("." + id).empty();
