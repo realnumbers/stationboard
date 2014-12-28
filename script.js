@@ -134,11 +134,11 @@ function matchInput(list, input) {
 }
 
 //output suggests
-function printSuggests(suggests) {
+function printSuggests(suggests, dest) {
 	var favo = loadFavo();
   var idList = new Array();
 
-	$(".search-results").empty();
+	dest.empty();
 	for (var i = 0; i < suggests.length; i++) {
     for (var j = 0; j < suggests[i].busstops.length; j++) {
       idList[j] = suggests[i].busstops[j].ORT_NR;
@@ -156,12 +156,12 @@ function printSuggests(suggests) {
 			'</article>';
 
 			//'<section class="bus-list" style="display: none;"></section>' +
-    $(".search-results").append(div); 
+    dest.append(div); 
 
 		//favo must be set before bindStar
 		if (favo[suggests[i].busstops[0].ORT_NR])
-			$(".search-results").find(".station-star:last").removeClass("nostar").addClass("star js-starred");
-		bindStar($(".search-results").find(".station-star:last"), suggests[i]);
+			dest.find(".station-star:last").removeClass("nostar").addClass("star js-starred");
+		bindStar(dest.find(".station-star:last"), suggests[i]);
 	}
 }
 
@@ -196,7 +196,7 @@ function insertRides() {
     var data = board[id].rides;
     $("." + id).empty();
     if (board[id].runing !== undefined && board[id].runing === false) {
-      for (var i = 0; i < data.length; i++) {
+      for (var i = 0; i < 4 && i < data.length; i++) {
         var div = '<article class="bus">' +
           '<label class="line" style="background-color:' + data[i].hexcode + '">' +
           (data[i].lidname).substring(0,3) +
@@ -221,7 +221,7 @@ function insertRides() {
 
 function addBoard(idList) {
   var div = "";
-  for (var i = 0; i < idList.length && i < 3; i++) {
+  for (var i = 0; i < idList.length; i++) {
     div += '<section ' +
       'class="' + idList[i] + 
       ' bus-list" style="display: none;">' +
@@ -298,8 +298,16 @@ function request(urlAPI, success, callback, index) {
 
 function drawContent() {
   var favo = loadFavo();
-  printSuggests(sug);
-  printFavorite(favo);
+  printSuggests(sug, $(".search-results"));
+  printSuggests(favo, $(".favorites"));
+
+	if (JSON.stringify(favo) == "{}")
+		$(".favorites-title").hide();
+	else
+		$(".favorites-title").show();
+
+  insertRides();
+
   bindToggle($(".search-results"));
   bindToggle($(".favorites"));
 }
