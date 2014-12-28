@@ -15,6 +15,12 @@ $(document).ready(function() {
 	$(":input").val("");
 	$(".bus-list").hide();
 	$(".station").removeClass("expanded");
+  var favo = loadFavo();
+  for (id in favo) {
+    favo[id].busstops.forEach( function (el, index) {
+      downloadBoard(el.ORT_NR);
+    });
+  }
 	drawContent();
 
 });
@@ -76,6 +82,7 @@ function removeFavorite(content) {
 
 function printFavorite(favo) {
 	//console.log(favo);
+  var idList = new Array();
 	if (JSON.stringify(favo) == "{}")
 		$(".favorites-title").hide();
 	else
@@ -83,6 +90,9 @@ function printFavorite(favo) {
 	$(".favorites").empty();
 	//console.log(favo);
 	for (var el in favo) {
+    for (var j = 0; j < favo[el].busstops.length; j++) {
+      idList[j] = favo[el].busstops[j].ORT_NR;
+    }
 		var div = '<article class="station">' +
 			'<header class="station-header">' +
 			'<h1 class="station-title">' +
@@ -91,9 +101,9 @@ function printFavorite(favo) {
 			'</h1>' +
 			'<button class="station-star star js-starred"></button>' +
 			'</header>' +
-			'<section class="bus-list" style="display: none;"></section>' +
+      addBoard(idList) +
 			'</article>';
-		var element = $(".favorites").append(div);
+		$(".favorites").append(div);
 		bindStar($(".favorites").find(".station-star:last"), favo[el]);
 	}
 }
@@ -172,8 +182,6 @@ function downloadBoard(id) {
 		board[id] = new Object();
 		board[id].runing = true;
 	}
-	//else if (board[id].rides != undefined)
-	//	writeBoard(el, id);
 }
 
 function stationSuccess(data, id) {
@@ -299,12 +307,7 @@ function request(urlAPI, success, callback, index) {
 function drawContent() {
   var favo = loadFavo();
   printSuggests(sug, $(".search-results"));
-  printSuggests(favo, $(".favorites"));
-
-	if (JSON.stringify(favo) == "{}")
-		$(".favorites-title").hide();
-	else
-		$(".favorites-title").show();
+  printFavorite(favo, $(".favorites"));
 
   insertRides();
 
