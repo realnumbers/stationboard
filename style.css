@@ -147,6 +147,12 @@ input, input:hover, input:focus, input:active {
 .bus-list {
   padding: 0 0.5em 0.7em;
 }
+.direction {
+  margin-bottom: 1em;
+}
+.direction:last-of-type {
+  margin-bottom: 0;
+}
 .bus {
   padding: 0.3em 0;
   display: flex;
@@ -170,4 +176,15 @@ input, input:hover, input:focus, input:active {
 }
 .endstation {
   flex: 1;
+}
+
+.standout .bus {
+  flex-direction: row-reverse;
+}
+.standout .endstation {
+  text-align: right;
+}
+.standout .line,
+.standout .time {
+  margin: 0 0 0 0.7em;
 }
