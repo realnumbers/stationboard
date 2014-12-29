@@ -112,6 +112,7 @@ function printFavorite(favo) {
       ' style="display: none;">' +
       '<label class="no-connections">No Connections</label>' +
       '</section>' +
+      '<img class="spinner" src="img/loading.svg" alt="Loading...">' +
       '</section>' +
 			'</article>';
 		$(".favorites").append(div);
@@ -183,6 +184,7 @@ function printSuggests(suggests, dest) {
       ' style="display: none;">' +
       '<label class="no-connections">No Connections</label>' +
       '</section>' +
+      '<img class="spinner" src="img/loading.svg" alt="Loading...">' +
       '</section>' +
 			'</article>';
 
@@ -198,7 +200,7 @@ function printSuggests(suggests, dest) {
 
 function downloadBoard(id) {
 	if (board[id] === undefined) {
-		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
+		var apiUrl = "http://stationb2oard.opensasa.info/?type=jsonp&ORT_NR=" + id;
 		request(apiUrl, stationSuccess, "JSONP", id);
 		board[id] = {};
 		board[id].runing = true;
@@ -217,6 +219,7 @@ function insertRides() {
     var data = board[id].rides;
     $("." + id).empty();
     if (board[id].runing !== undefined && board[id].runing === false) {
+      $("." + id).siblings(".spinner").hide();
       for (var i = 0; i < 4 && i < data.length; i++) {
         var div = '<article class="bus">' +
           '<label class="line" style="background-color:' + data[i].hexcode + '">' +
@@ -238,6 +241,10 @@ function insertRides() {
       }
       else
         $("." + id).siblings(".js-no-connections").hide();
+    }
+    else {
+        $("." + id).siblings(".spinner").show();
+
     }
   }
 }
