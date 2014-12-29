@@ -81,6 +81,7 @@ function removeFavorite(content) {
 }
 
 function printFavorite(favo) {
+  var idList = [];
 	//console.log(favo);
 	if (JSON.stringify(favo) == "{}")
 		$(".favorites-title").hide();
@@ -89,8 +90,8 @@ function printFavorite(favo) {
 	$(".favorites").empty();
 	//console.log(favo);
 	for (var el in favo) {
+    idList = [];
     for (var j = 0; j < favo[el].busstops.length; j++) {
-      var idList = new Array();
       idList[j] = favo[el].busstops[j].ORT_NR;
     }
     console.log("Favo", idList);
@@ -102,7 +103,16 @@ function printFavorite(favo) {
 			'</h1>' +
 			'<button class="station-star star js-starred"></button>' +
 			'</header>' +
+      '<section ' +
+      'class="bus-list' + 
+      '" style="display: none;">' +
       addBoard(idList) +
+      '<section ' +
+      'class="js-no-connections" ' +
+      ' style="display: none;">' +
+      '<label class="no-connections">No Connections</label>' +
+      '</section>' +
+      '</section>' +
 			'</article>';
 		$(".favorites").append(div);
 		bindStar($(".favorites").find(".station-star:last"), favo[el]);
@@ -147,10 +157,11 @@ function matchInput(list, input) {
 //output suggests
 function printSuggests(suggests, dest) {
 	var favo = loadFavo();
-  var idList = new Array();
+  var idList = [];
 
 	dest.empty();
 	for (var i = 0; i < suggests.length; i++) {
+    idList = [];
     for (var j = 0; j < suggests[i].busstops.length; j++) {
       idList[j] = suggests[i].busstops[j].ORT_NR;
     }
@@ -163,7 +174,16 @@ function printSuggests(suggests, dest) {
 			'</h1>' +
 			'<button class="station-star nostar"></button>' +
 			'</header>' +
+      '<section ' +
+      'class="bus-list"' + 
+      ' style="display: none;">' +
       addBoard(idList) +
+      '<section ' +
+      'class="js-no-connections" ' +
+      ' style="display: none;">' +
+      '<label class="no-connections">No Connections</label>' +
+      '</section>' +
+      '</section>' +
 			'</article>';
 
 			//'<section class="bus-list" style="display: none;"></section>' +
@@ -180,7 +200,7 @@ function downloadBoard(id) {
 	if (board[id] === undefined) {
 		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
 		request(apiUrl, stationSuccess, "JSONP", id);
-		board[id] = new Object();
+		board[id] = {};
 		board[id].runing = true;
 	}
 }
@@ -209,13 +229,15 @@ function insertRides() {
           data[i].last_station.split(" - ")[lang] +
           '</label>' +
           '</article>';
-        $("." + id).append(div);
+        $("." + id).append(div).show();
       }
 
       if (data.length === 0) {
-        $("." + id).append(
-            '<label class="no-connections">No Connections</label>');
+        if (!($("." + id).siblings().is(":visible")))
+          $("." + id).siblings(".js-no-connections").show();
       }
+      else
+        $("." + id).siblings(".js-no-connections").hide();
     }
   }
 }
@@ -225,7 +247,7 @@ function addBoard(idList) {
   for (var i = 0; i < idList.length; i++) {
     div += '<section ' +
       'class="' + idList[i] + 
-      ' bus-list direction' + 
+      ' direction' + 
       ((i%2 === 0)? '' : ' standout') +
       '" style="display: none;">' +
       '</section>';
