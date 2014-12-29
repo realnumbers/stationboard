@@ -157,10 +157,11 @@ function matchInput(list, input) {
 //output suggests
 function printSuggests(suggests, dest) {
 	var favo = loadFavo();
-  var idList = new Array();
+  var idList = [];
 
 	dest.empty();
 	for (var i = 0; i < suggests.length; i++) {
+    idList = [];
     for (var j = 0; j < suggests[i].busstops.length; j++) {
       idList[j] = suggests[i].busstops[j].ORT_NR;
     }
@@ -232,8 +233,11 @@ function insertRides() {
       }
 
       if (data.length === 0) {
-        $("." + id).siblings(".js-no-connections").show();
+        if (!($("." + id).siblings().is(":visible")))
+          $("." + id).siblings(".js-no-connections").show();
       }
+      else
+        $("." + id).siblings(".js-no-connections").hide();
     }
   }
 }
