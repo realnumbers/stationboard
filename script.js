@@ -200,7 +200,7 @@ function printSuggests(suggests, dest) {
 
 function downloadBoard(id) {
 	if (board[id] === undefined) {
-		var apiUrl = "http://stationb2oard.opensasa.info/?type=jsonp&ORT_NR=" + id;
+		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
 		request(apiUrl, stationSuccess, "JSONP", id);
 		board[id] = {};
 		board[id].runing = true;
