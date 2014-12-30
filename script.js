@@ -294,8 +294,8 @@ function validitySuccess(data) {
 function busstopsSuccess(data) {
   for (var i = 0; i < data.length; i++) {
     // [0] is italian [1] is german
-    data[i].stop = data[i].ORT_NAME.split(" - ");
-    data[i].city = data[i].ORT_GEMEINDE.split(" - ");
+    data[i].stop = parseString(data[i].ORT_NAME);
+    data[i].city = parseString(data[i].ORT_GEMEINDE);
   }
   localStorage.setItem('busstops', JSON.stringify(data));
 }
@@ -345,7 +345,6 @@ function drawContent() {
 
 function parseString(str) {
   str = str.split("-");
-  console.log(str);
   str[0] = sanitizeNames(str[0]);
   str[1] = sanitizeNames(str[1]);
   if (str[0] === "")
@@ -356,9 +355,9 @@ function parseString(str) {
 }
 
 function sanitizeNames(str) {
-	var newstr;
 	var re = /^[a-z0-9]+$/i; // alphanumeric chars
 	var i = 0;
+  if (str !== undefined) {
 	while( !re.test(str[i]) && i < str.length) {
 		i++;
 	}
@@ -368,4 +367,6 @@ function sanitizeNames(str) {
 	}
 	if (i >= str.length) return "";
 	else return str.substring(i, j + 1);
+  }
+  else return "";
 }
