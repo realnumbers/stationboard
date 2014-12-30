@@ -31,6 +31,14 @@ body {
 h1, h2, h3, h4 {
   margin: 0;
 }
+a {
+  font-weight: bold;
+  text-decoration: none;
+  color: #4a9ac2;
+}
+a:hover {
+  border-bottom: 0.15em solid;
+}
 button, button:hover, button:focus, button:active {
   background-color: transparent;
   color: transparent;
@@ -205,6 +213,32 @@ input, input:hover, input:focus, input:active {
   margin: 0 0 0 0.7em;
 }
 
+/* FOOTER */
+.footer {
+  width: 96%;
+  margin: 6em auto 4em;
+  text-align: center;
+  line-height: 150%;
+  color: #808080;
+}
+.footer,
+.footer * {
+  font-size: 0.9rem;
+}
+.footer > small {
+  display: block;
+  margin: 1em 0;
+}
+@media screen and (min-width: 380px) {
+  .footer {
+    width: 320px;
+  }
+}
+@media screen and (min-width: 500px) {
+  .footer {
+    width: 400px;
+  }
+}
 /* Loading icon */
 @keyframes spin {
   from { transform: rotate(0deg); }
