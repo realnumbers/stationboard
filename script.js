@@ -2,8 +2,8 @@ var iconStar = "img/star.svg";
 var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
 var lang = 0; // 0 for italian and 1 for german
-var sug = new Array();
-var board = new Object();
+var sug = [];
+var board = {};
 
 
 loadBusstopsList();
@@ -16,7 +16,7 @@ $(document).ready(function() {
 	$(".bus-list").hide();
 	$(".station").removeClass("expanded");
   var favo = loadFavo();
-  for (id in favo) {
+  for (var id in favo) {
     favo[id].busstops.forEach( function (el, index) {
       downloadBoard(el.ORT_NR);
     });
@@ -94,7 +94,6 @@ function printFavorite(favo) {
     for (var j = 0; j < favo[el].busstops.length; j++) {
       idList[j] = favo[el].busstops[j].ORT_NR;
     }
-    console.log("Favo", idList);
 		var div = '<article class="station">' +
 			'<header class="station-header">' +
 			'<h1 class="station-title">' +
@@ -104,7 +103,7 @@ function printFavorite(favo) {
 			'<button class="station-star star js-starred"></button>' +
 			'</header>' +
       '<section ' +
-      'class="bus-list' + 
+      'class="bus-list' +
       '" style="display: none;">' +
       addBoard(idList) +
       '<section ' +
@@ -176,7 +175,7 @@ function printSuggests(suggests, dest) {
 			'<button class="station-star nostar"></button>' +
 			'</header>' +
       '<section ' +
-      'class="bus-list"' + 
+      'class="bus-list"' +
       ' style="display: none;">' +
       addBoard(idList) +
       '<section ' +
@@ -189,7 +188,7 @@ function printSuggests(suggests, dest) {
 			'</article>';
 
 			//'<section class="bus-list" style="display: none;"></section>' +
-    dest.append(div); 
+    dest.append(div);
 
 		//favo must be set before bindStar
 		if (favo[suggests[i].busstops[0].ORT_NR])
@@ -217,10 +216,12 @@ function stationSuccess(data, id) {
 function insertRides() {
   for (var id in board) {
     var data = board[id].rides;
+    var max = 4;
     $("." + id).empty();
     if (board[id].runing !== undefined && board[id].runing === false) {
       $("." + id).siblings(".spinner").hide();
-      for (var i = 0; i < 4 && i < data.length; i++) {
+      for (var i = 0; i < max && i < data.length; i++) {
+        if (data[i].departure !== null) {
         var div = '<article class="bus">' +
           '<label class="line" style="background-color:' + data[i].hexcode + '">' +
           (data[i].lidname).substring(0,3) +
@@ -229,10 +230,13 @@ function insertRides() {
           formatTime(data[i].departure) +
           '</label>' +
           '<label class="endstation">' +
-          data[i].last_station.split(" - ")[lang] +
+          parseString(data[i].last_station)[lang] +
           '</label>' +
           '</article>';
         $("." + id).append(div).show();
+        }
+        else
+          max++;
       }
 
       if (data.length === 0) {
@@ -253,8 +257,8 @@ function addBoard(idList) {
   var div = "";
   for (var i = 0; i < idList.length; i++) {
     div += '<section ' +
-      'class="' + idList[i] + 
-      ' direction' + 
+      'class="' + idList[i] +
+      ' direction' +
       ((i%2 === 0)? '' : ' standout') +
       '" style="display: none;">' +
       '</section>';
@@ -290,8 +294,8 @@ function validitySuccess(data) {
 function busstopsSuccess(data) {
   for (var i = 0; i < data.length; i++) {
     // [0] is italian [1] is german
-    data[i].stop = data[i].ORT_NAME.split(" - ");
-    data[i].city = data[i].ORT_GEMEINDE.split(" - ");
+    data[i].stop = parseString(data[i].ORT_NAME);
+    data[i].city = parseString(data[i].ORT_GEMEINDE);
   }
   localStorage.setItem('busstops', JSON.stringify(data));
 }
@@ -305,7 +309,7 @@ function loadFavo() {
   if (localStorage.fav)
     return JSON.parse(localStorage.fav);
   else
-    return new Object();
+    return {};
 }
 
 function saveFavo(data) {
@@ -337,4 +341,32 @@ function drawContent() {
 
   bindToggle($(".search-results"));
   bindToggle($(".favorites"));
+}
+
+function parseString(str) {
+  str = str.split("-");
+  str[0] = sanitizeNames(str[0]);
+  str[1] = sanitizeNames(str[1]);
+  if (str[0] === "")
+    str[0] = str[1];
+  if (str[1] === "")
+    str[1] = str[0];
+  return str;
+}
+
+function sanitizeNames(str) {
+	var re = /^[a-z0-9]+$/i; // alphanumeric chars
+	var i = 0;
+  if (str !== undefined) {
+	while( !re.test(str[i]) && i < str.length) {
+		i++;
+	}
+	var j = str.length - 1;
+	while( !re.test(str[j]) && j >= 0) {
+		j--;
+	}
+	if (i >= str.length) return "";
+	else return str.substring(i, j + 1);
+  }
+  else return "";
 }
