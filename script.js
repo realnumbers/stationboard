@@ -301,6 +301,12 @@ function busstopsSuccess(data) {
     // [0] is italian [1] is german
     data[i].stop = parseString(data[i].ORT_NAME);
     data[i].city = parseString(data[i].ORT_GEMEINDE);
+    if (i+1 < data.length && data[i].ORT_NAME === data[i+1].ORT_NAME && data[i].ORT_GEMEINDE === data[i+1].ORT_GEMEINDE){
+      data[i].busstops = data[i].busstops.concat(data[i+1].busstops);
+      data.splice(i+1, 1);
+      console.log(data.length);
+    }
+      
     data[i].rank = 0;
     if (data[i].city[0] === "Bolzano")
       data[i].rank = 30;
