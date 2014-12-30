@@ -221,6 +221,7 @@ function insertRides() {
     if (board[id].runing !== undefined && board[id].runing === false) {
       $("." + id).siblings(".spinner").hide();
       for (var i = 0; i < 4 && i < data.length; i++) {
+        if (data[i].departure !== null) {
         var div = '<article class="bus">' +
           '<label class="line" style="background-color:' + data[i].hexcode + '">' +
           (data[i].lidname).substring(0,3) +
@@ -233,6 +234,7 @@ function insertRides() {
           '</label>' +
           '</article>';
         $("." + id).append(div).show();
+        }
       }
 
       if (data.length === 0) {
