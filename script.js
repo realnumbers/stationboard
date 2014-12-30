@@ -5,6 +5,11 @@ var lang = 0; // 0 for italian and 1 for german
 var sug = [];
 var board = {};
 
+var individualRankings = {
+  //"id": rank,
+  "516" : -200,
+}
+
 
 loadBusstopsList();
 
@@ -296,7 +301,19 @@ function busstopsSuccess(data) {
     // [0] is italian [1] is german
     data[i].stop = parseString(data[i].ORT_NAME);
     data[i].city = parseString(data[i].ORT_GEMEINDE);
+    data[i].rank = 0;
+    if (data[i].city[0] === "Bolzano")
+      data[i].rank = 30;
+    else if (data[i].city[0] === "Merano")
+      data[i].rank = 20;
+    else if (data[i].city[0] === "Lana")
+      data[i].rank = 10;
+    if (data[i].stop[0].match(/stazione/gi) !== null)
+      data[i].rank += 20;
+    if (individualRankings[data[i].busstops[0].ORT_NR] !== undefined)
+       data[i].rank = individualRankings[data[i].busstops[0].ORT_NR];
   }
+  data.sort(function(a,b) { return parseFloat(b.rank) - parseFloat(a.rank) } );
   localStorage.setItem('busstops', JSON.stringify(data));
 }
 
