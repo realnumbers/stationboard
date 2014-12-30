@@ -2,8 +2,8 @@ var iconStar = "img/star.svg";
 var iconNostar = "img/nostar.svg";
 var iconSearch = "img/search.svg";
 var lang = 0; // 0 for italian and 1 for german
-var sug = new Array();
-var board = new Object();
+var sug = [];
+var board = {};
 
 
 loadBusstopsList();
@@ -16,7 +16,7 @@ $(document).ready(function() {
 	$(".bus-list").hide();
 	$(".station").removeClass("expanded");
   var favo = loadFavo();
-  for (id in favo) {
+  for (var id in favo) {
     favo[id].busstops.forEach( function (el, index) {
       downloadBoard(el.ORT_NR);
     });
@@ -104,7 +104,7 @@ function printFavorite(favo) {
 			'<button class="station-star star js-starred"></button>' +
 			'</header>' +
       '<section ' +
-      'class="bus-list' + 
+      'class="bus-list' +
       '" style="display: none;">' +
       addBoard(idList) +
       '<section ' +
@@ -176,7 +176,7 @@ function printSuggests(suggests, dest) {
 			'<button class="station-star nostar"></button>' +
 			'</header>' +
       '<section ' +
-      'class="bus-list"' + 
+      'class="bus-list"' +
       ' style="display: none;">' +
       addBoard(idList) +
       '<section ' +
@@ -189,7 +189,7 @@ function printSuggests(suggests, dest) {
 			'</article>';
 
 			//'<section class="bus-list" style="display: none;"></section>' +
-    dest.append(div); 
+    dest.append(div);
 
 		//favo must be set before bindStar
 		if (favo[suggests[i].busstops[0].ORT_NR])
@@ -253,8 +253,8 @@ function addBoard(idList) {
   var div = "";
   for (var i = 0; i < idList.length; i++) {
     div += '<section ' +
-      'class="' + idList[i] + 
-      ' direction' + 
+      'class="' + idList[i] +
+      ' direction' +
       ((i%2 === 0)? '' : ' standout') +
       '" style="display: none;">' +
       '</section>';
@@ -305,7 +305,7 @@ function loadFavo() {
   if (localStorage.fav)
     return JSON.parse(localStorage.fav);
   else
-    return new Object();
+    return {};
 }
 
 function saveFavo(data) {
@@ -337,4 +337,17 @@ function drawContent() {
 
   bindToggle($(".search-results"));
   bindToggle($(".favorites"));
+}
+
+function sanitizeNames(str) {
+	var newstr;
+	var i = 0;
+	while( !(/^[a-z0-9]+$/i).test(str[i]) && i < str.length) {
+		i++;
+	}
+	var j = str.length - 1;
+	while( !(/^[a-z0-9]+$/i).test(str[j]) && j >= 0) {
+		j--;
+	}
+	return str.substring(i, j);
 }
