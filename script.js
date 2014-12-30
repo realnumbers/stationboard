@@ -94,7 +94,6 @@ function printFavorite(favo) {
     for (var j = 0; j < favo[el].busstops.length; j++) {
       idList[j] = favo[el].busstops[j].ORT_NR;
     }
-    console.log("Favo", idList);
 		var div = '<article class="station">' +
 			'<header class="station-header">' +
 			'<h1 class="station-title">' +
