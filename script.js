@@ -343,13 +343,15 @@ function drawContent() {
 
 function sanitizeNames(str) {
 	var newstr;
+	var re = /^[a-z0-9]+$/i; // alphanumeric chars
 	var i = 0;
-	while( !(/^[a-z0-9]+$/i).test(str[i]) && i < str.length) {
+	while( !re.test(str[i]) && i < str.length) {
 		i++;
 	}
 	var j = str.length - 1;
-	while( !(/^[a-z0-9]+$/i).test(str[j]) && j >= 0) {
+	while( !re.test(str[j]) && j >= 0) {
 		j--;
 	}
-	return str.substring(i, j);
+	if (i >= str.length) return "";
+	else return str.substring(i, j + 1);
 }
