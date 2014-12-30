@@ -94,7 +94,6 @@ function printFavorite(favo) {
     for (var j = 0; j < favo[el].busstops.length; j++) {
       idList[j] = favo[el].busstops[j].ORT_NR;
     }
-    console.log("Favo", idList);
 		var div = '<article class="station">' +
 			'<header class="station-header">' +
 			'<h1 class="station-title">' +
@@ -339,6 +338,17 @@ function drawContent() {
 
   bindToggle($(".search-results"));
   bindToggle($(".favorites"));
+}
+
+function parseString(str) {
+  str = str.split("-");
+  str[0] = sanitizeNames(str[0]);
+  str[1] = sanitizeNames(str[1]);
+  if (str[0] === "")
+    str[0] = str[1];
+  if (str[1] === "")
+    str[1] = str[0];
+  return str;
 }
 
 function sanitizeNames(str) {
