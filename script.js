@@ -5,6 +5,11 @@ var lang = 0; // 0 for italian and 1 for german
 var sug = [];
 var board = {};
 
+var individualRankings = {
+  //"id": rank,
+  "516" : -200,
+}
+
 
 loadBusstopsList();
 
@@ -216,10 +221,11 @@ function stationSuccess(data, id) {
 function insertRides() {
   for (var id in board) {
     var data = board[id].rides;
+    var max = 4;
     $("." + id).empty();
     if (board[id].runing !== undefined && board[id].runing === false) {
       $("." + id).siblings(".spinner").hide();
-      for (var i = 0; i < 4 && i < data.length; i++) {
+      for (var i = 0; i < max && i < data.length; i++) {
         if (data[i].departure !== null) {
         var div = '<article class="bus">' +
           '<label class="line" style="background-color:' + data[i].hexcode + '">' +
@@ -229,11 +235,13 @@ function insertRides() {
           formatTime(data[i].departure) +
           '</label>' +
           '<label class="endstation">' +
-          data[i].last_station.split(" - ")[lang] +
+          parseString(data[i].last_station)[lang] +
           '</label>' +
           '</article>';
         $("." + id).append(div).show();
         }
+        else
+          max++;
       }
 
       if (data.length === 0) {
@@ -291,9 +299,27 @@ function validitySuccess(data) {
 function busstopsSuccess(data) {
   for (var i = 0; i < data.length; i++) {
     // [0] is italian [1] is german
-    data[i].stop = data[i].ORT_NAME.split(" - ");
-    data[i].city = data[i].ORT_GEMEINDE.split(" - ");
+    data[i].stop = parseString(data[i].ORT_NAME);
+    data[i].city = parseString(data[i].ORT_GEMEINDE);
+    if (i+1 < data.length && data[i].ORT_NAME === data[i+1].ORT_NAME && data[i].ORT_GEMEINDE === data[i+1].ORT_GEMEINDE){
+      data[i].busstops = data[i].busstops.concat(data[i+1].busstops);
+      data.splice(i+1, 1);
+      console.log(data.length);
+    }
+      
+    data[i].rank = 0;
+    if (data[i].city[0] === "Bolzano")
+      data[i].rank = 30;
+    else if (data[i].city[0] === "Merano")
+      data[i].rank = 20;
+    else if (data[i].city[0] === "Lana")
+      data[i].rank = 10;
+    if (data[i].stop[0].match(/stazione/gi) !== null)
+      data[i].rank += 20;
+    if (individualRankings[data[i].busstops[0].ORT_NR] !== undefined)
+       data[i].rank = individualRankings[data[i].busstops[0].ORT_NR];
   }
+  data.sort(function(a,b) { return parseFloat(b.rank) - parseFloat(a.rank) } );
   localStorage.setItem('busstops', JSON.stringify(data));
 }
 
@@ -352,9 +378,9 @@ function parseString(str) {
 }
 
 function sanitizeNames(str) {
-	var newstr;
 	var re = /^[a-z0-9]+$/i; // alphanumeric chars
 	var i = 0;
+  if (str !== undefined) {
 	while( !re.test(str[i]) && i < str.length) {
 		i++;
 	}
@@ -364,4 +390,6 @@ function sanitizeNames(str) {
 	}
 	if (i >= str.length) return "";
 	else return str.substring(i, j + 1);
+  }
+  else return "";
 }
