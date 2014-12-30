@@ -216,10 +216,11 @@ function stationSuccess(data, id) {
 function insertRides() {
   for (var id in board) {
     var data = board[id].rides;
+    var max = 4;
     $("." + id).empty();
     if (board[id].runing !== undefined && board[id].runing === false) {
       $("." + id).siblings(".spinner").hide();
-      for (var i = 0; i < 4 && i < data.length; i++) {
+      for (var i = 0; i < max && i < data.length; i++) {
         if (data[i].departure !== null) {
         var div = '<article class="bus">' +
           '<label class="line" style="background-color:' + data[i].hexcode + '">' +
@@ -229,11 +230,13 @@ function insertRides() {
           formatTime(data[i].departure) +
           '</label>' +
           '<label class="endstation">' +
-          data[i].last_station.split(" - ")[lang] +
+          parseString(data[i].last_station)[lang] +
           '</label>' +
           '</article>';
         $("." + id).append(div).show();
         }
+        else
+          max++;
       }
 
       if (data.length === 0) {
@@ -342,6 +345,7 @@ function drawContent() {
 
 function parseString(str) {
   str = str.split("-");
+  console.log(str);
   str[0] = sanitizeNames(str[0]);
   str[1] = sanitizeNames(str[1]);
   if (str[0] === "")
