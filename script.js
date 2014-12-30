@@ -340,6 +340,17 @@ function drawContent() {
   bindToggle($(".favorites"));
 }
 
+function parseString(str) {
+  str = str.split("-");
+  str[0] = sanitizeNames(str[0]);
+  str[1] = sanitizeNames(str[1]);
+  if (str[0] === "")
+    str[0] = str[1];
+  if (str[1] === "")
+    str[1] = str[0];
+  return str;
+}
+
 function sanitizeNames(str) {
 	var newstr;
 	var i = 0;
