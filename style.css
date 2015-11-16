@@ -108,6 +108,7 @@ input, input:hover, input:focus, input:active {
   overflow: hidden;
   background-color: #fff;
   border-bottom: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 .search-container {
   display: flex;
@@ -159,7 +160,6 @@ input, input:hover, input:focus, input:active {
 .expanded {
   margin: 0.3em 0;
   border: 1px solid #ccc;
-  //border-radius: 4px;
   background: #fff;
   box-shadow: 0 1px 2px #ccc;
 }
