@@ -18,8 +18,7 @@ html {
     font-size: 18px;
   }
 }
-
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 1400px) {
   * {
     font-size: 20px;
   }
@@ -63,6 +62,9 @@ input, input:hover, input:focus, input:active {
 }
 
 /* LAYOUT */
+.header-bar {
+  width: 100%;
+}
 .container, .scroll-container, .search-container {
   width: 100%;
   margin: 0 auto;
@@ -74,18 +76,49 @@ input, input:hover, input:focus, input:active {
   padding: 4.4em 1em 2em;
 }
 @media screen and (min-width: 550px) {
-  .scroll-container, .search-container {
-    width: 70%;
-    padding-left: 0;
-    padding-right: 0;
+  .header-bar {
+    left: 10%;
+    width: 80%;
+    margin-top: 1em;
+    border-radius: 6px;
   }
   .search-container {
-    padding: 1.3em 0.5em;
+    width: 92%;
+    padding: 1em 0.3em;
+  }
+  .scroll-container {
+    margin-top: 1em;
+    width: 70%;
   }
 }
 @media screen and (min-width: 750px) {
-  .scroll-container, .search-container {
+  .scroll-container {
     width: 50%;
+  }
+  .header-bar {
+    width: 60%;
+    left: 20%;
+  }
+  .scroll-container {
+    width: 60%;
+  }
+}
+@media screen and (min-width: 1000px) {
+  .header-bar {
+    width: 50%;
+    left: 25%;
+  }
+  .scroll-container {
+    width: 50%;
+  }
+}
+@media screen and (min-width: 1400px) {
+  .header-bar {
+    width: 650px;
+    left: calc( (100% - 650px) / 2 );
+  }
+  .scroll-container {
+    width: 650px;
   }
 }
 .search-results, .favorites {
@@ -98,17 +131,17 @@ input, input:hover, input:focus, input:active {
   padding-bottom: 0.5em;
   text-align: center;
   text-transform: uppercase;
+  color: #808080;
 }
 
 /* SEARCH HEADER */
 .header-bar {
-  width: 100%;
   position: fixed;
   top: 0;
   overflow: hidden;
-  background-color: #fff;
   border-bottom: 1px solid #ccc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  background-color: #fff;
 }
 .search-container {
   display: flex;
@@ -140,7 +173,7 @@ input, input:hover, input:focus, input:active {
 }
 .station:hover {
   background-color: #f6f6f6;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
 }
 .station:active {
   background-color: #e0e0e0;
@@ -159,9 +192,9 @@ input, input:hover, input:focus, input:active {
 }
 .expanded {
   margin: 0.3em 0;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   background: #fff;
-  box-shadow: 0 1px 2px #ccc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 .expanded .station-title {
   font-weight: 600;
