@@ -204,7 +204,7 @@ function printSuggests(suggests, dest) {
 
 function downloadBoard(id) {
 	if (board[id] === undefined) {
-		var apiUrl = "http://stationboard.opensasa.info/?type=jsonp&ORT_NR=" + id;
+		var apiUrl = "https://bus-api.sparber.net/stationboard/?type=jsonp&ORT_NR=" + id;
 		request(apiUrl, stationSuccess, "JSONP", id);
 		board[id] = {};
 		board[id].runing = true;
@@ -275,7 +275,7 @@ function addBoard(idList) {
 function loadBusstopsList() {
   //console.log("Start Request");
   var apiUrl =
-    "http://opensasa.info/SASAplandata/?type=BASIS_VER_GUELTIGKEIT";
+    "https://bus-api.sparber.net/SASAplandata/?type=BASIS_VER_GUELTIGKEIT";
   request(apiUrl, validitySuccess, "jsonp");
 }
 
@@ -289,7 +289,7 @@ function validitySuccess(data) {
     localStorage.version = data[0].VER_GUELTIGKEIT;
     if (!localStorage.busstops) {
       //console.log("New Data");
-      var apiUrl = "http://opensasa.info/SASAplandata/?type=REC_ORT";
+      var apiUrl = "https://bus-api.sparber.net/SASAplandata/?type=REC_ORT";
       request(apiUrl, busstopsSuccess, "jsonp");
     }
   }
